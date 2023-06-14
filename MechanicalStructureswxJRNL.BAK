@@ -1,0 +1,89 @@
+' ******************************************************************************
+' swxJRNL.swj - journal recorded on 06/09/23 by Younglar
+' *****************************************************************************
+Dim swApp As Object
+
+Dim Part As Object
+Dim boolstatus As Boolean
+Dim longstatus As Long, longwarnings As Long
+
+Sub main()
+
+Set swApp = Application.SldWorks
+
+swApp.ActivateDoc2 "raspberry_p4b_v001.SLDPRT", False, longstatus
+Set Part = swApp.ActiveDoc
+Set Part = swApp.ActiveDoc
+Dim myModelView As Object
+Set myModelView = Part.ActiveView
+myModelView.FrameLeft = 0
+myModelView.FrameTop = 0
+Set myModelView = Part.ActiveView
+myModelView.FrameState = swWindowState_e.swWindowMaximized
+Set myModelView = Part.ActiveView
+myModelView.FrameState = swWindowState_e.swWindowMaximized
+Set myModelView = Part.ActiveView
+myModelView.FrameState = swWindowState_e.swWindowMaximized
+Set myModelView = Part.ActiveView
+myModelView.FrameState = swWindowState_e.swWindowMaximized
+boolstatus = Part.Extension.SelectByRay(-0.1086903565691272888, 0.04054428451718194992, 0.02546675945313836564, -0.4000360267793122704, -0.5150380749100240685, -0.7580942940502836125, 0.0003864239841681045931, 1, False, 0, 0)
+boolstatus = Part.Extension.SelectByRay(-0.04902193738695359571, 0.04034911009597408338, 0.02530105967127838085, -0.4000360267793122704, -0.5150380749100240685, -0.7580942940502836125, 0.0003864239841681045931, 1, False, 0, 0)
+
+' Named View
+Part.ShowNamedView2 "*前视", 1
+Part.ViewZoomtofit2
+boolstatus = Part.Extension.SelectByRay(-0.1059087739440165432, 0.04112075148447709438, 0.02540442768707862342, 0, 0, -1, 0.0003302128652001001786, 1, False, 0, 0)
+boolstatus = Part.Extension.SelectByRay(-0.09464268795483664343, 0.03296255128541579482, 0.02540442768707862342, 0, 0, -1, 0.0003302128652001001786, 2, False, 0, 0)
+boolstatus = Part.Extension.SelectByRay(-0.08094856619212660587, 0.01936555095364698303, 0.02780442768710145174, 0, 0, -1, 0.0003302128652001001786, 2, False, 0, 0)
+boolstatus = Part.Extension.SelectByRay(-0.1065886239606049779, 0.0406351443297710696, 0.02540442768707862342, 0, 0, -1, 0.0003302128652001001786, 1, False, 0, 0)
+boolstatus = Part.Extension.SelectByRay(-0.1065886239606049779, 0.0406351443297710696, 0.02540442768707862342, 0, 0, -1, 0.0003302128652001001786, 1, False, 0, 0)
+Dim motionStudyMgr As Object
+Set motionStudyMgr = Part.Extension.GetMotionStudyManager()
+boolstatus = motionStudyMgr.ActivateMotionStudy("Bewegungsstudie 1")
+Part.ClearSelection2 True
+Set motionStudyMgr = Part.Extension.GetMotionStudyManager()
+boolstatus = motionStudyMgr.ActivateMotionStudy("模型")
+boolstatus = Part.Extension.SelectByRay(-0.04928697970529347105, 0.04014953717506503789, 0.02540442768707862342, 0, 0, -1, 0.0003302128652001001786, 1, False, 0, 0)
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "BODYFEATURE", 0, 0, 0, False, 0, Nothing, 0)
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+boolstatus = Part.Extension.SelectByID2("MOLEX_672983090-1-solid1", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+boolstatus = Part.Extension.SelectByID2("MOLEX_672983090-1-solid2", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+retval = swApp.Callback ( "fworks@FWPlaybackManager", 0, "SetAutoDimOptions 0 0 0 0")
+retval = swApp.Callback ( "fworks@FWPlaybackManager", 0, "SetAutoRelOptions 0")
+retval = swApp.Callback ( "fworks@FWPlaybackManager", 0, "ResizeFeature")
+
+'FeatureWorks Block ClearSelection
+#IF FWORKS_ENABLE_SWAPI_CALLS THEN
+#END IF
+'FeatureWorks Block ForceRebuild
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+Part.FeatureManager.HideBodies
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+boolstatus = Part.Extension.SelectByID2("MOLEX_672983090-1-solid2", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+Part.FeatureManager.ShowBodies
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "SOLIDBODY", 0, 0, 0, False, 0, Nothing, 0)
+Part.ClearSelection2 True
+boolstatus = Part.Extension.SelectByRay(-0.06075575515281672612, 0.02378938136570451015, 0.02540442768707862342, 0, 0, -1, 0.0003930917348212110214, 2, False, 0, 0)
+Part.ClearSelection2 True
+Part.ClearSelection2 True
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "BODYFEATURE", 0, 0, 0, False, 0, Nothing, 0)
+Part.ClearSelection2 True
+Part.EditUndo2 1
+Part.EditUndo2 1
+Part.EditUndo2 1
+Part.EditUndo2 1
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "SOLIDBODY", 0, 0, 0, True, 0, Nothing, 0)
+Part.ClearSelection2 True
+Part.EditUndo2 1
+boolstatus = Part.Extension.SelectByID2("pcb01-1-solid1", "SOLIDBODY", 0, 0, 0, True, 0, Nothing, 0)
+Part.ClearSelection2 True
+Part.EditUndo2 1
+' MSGBOX
+' 是否将改动保存到 raspberry_p4b_v001.SLDPRT？
+
+swApp.ExitApp
+End Sub
