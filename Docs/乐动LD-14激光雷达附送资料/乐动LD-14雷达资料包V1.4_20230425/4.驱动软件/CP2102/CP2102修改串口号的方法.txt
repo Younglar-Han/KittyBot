@@ -1,0 +1,1 @@
+windows电脑安装驱动后，打开修改设备号的工具，cp2102设备接入windows电脑，修改“serial”的值更改为你的目标值，然后点击“Program Device”后耐心等待修改完成。
