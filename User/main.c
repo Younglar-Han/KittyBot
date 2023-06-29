@@ -68,22 +68,10 @@ void TIM2_IRQHandler(void)//这个中断函数在启动文件里找//由于速度不稳定，中断间隔
 	{
 		CurrentTime++;
 		Motor_Update();
- 		if(CurrentTime%1000 == 300)
+ 		if(CurrentTime%100 == 0)
  		{
-			ForwardDistance(-0.6);
+			RedLED_Turn();
  		}
- 		if(fabs(Position1 + 0.6f)<0.01f&&(!ArriveFlag))
- 		{
- 			YawRotateDeg(180);
- 			ArriveFlag = true;
- 		}
- 		if(fabs(Position1 - (-0.6f-0.2042f))<0.01f&&ArriveFlag&&(!RotateFlag))
- 		{
- 			ForwardDistance(-0.6);
- 			RotateFlag = true;
- 		}
-
-
 
 		/* Timer debug */
 		// OLED_ShowString(1, 1, "Time:");
