@@ -32,7 +32,7 @@ int main(void)
 	Encoder_Init();
 	OpenMV_Init();
 	
-	RedLED_ON();//若程序正常运行，则PC13LED亮起
+	GreenLED_ON();//若程序正常运行，则PC13LED亮起
 
 	/* OLED显示初始化 */
 //	OLED_ShowString(1, 1, "----Younglar----");
@@ -70,7 +70,7 @@ void TIM2_IRQHandler(void)//这个中断函数在启动文件里找//由于速度不稳定，中断间隔
 		Motor_Update();
  		if(CurrentTime%100 == 0)
  		{
-			RedLED_Turn();
+			GreenLED_Turn();
  		}
 
 		/* Timer debug */

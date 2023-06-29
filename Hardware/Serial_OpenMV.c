@@ -143,7 +143,7 @@ void USART3_IRQHandler(void)
 		}
 		if(FromOpenMV_RxPacket[5] == 1)
 		{
-			RedLED_Turn();
+			GreenLED_Turn();
 		}
 		
 		

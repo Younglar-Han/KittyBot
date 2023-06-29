@@ -19,17 +19,17 @@ void LED_Init(void)
 	GPIO_SetBits(GPIOC, GPIO_Pin_13);
 }
 
-void RedLED_ON(void)
+void GreenLED_ON(void)
 {
 	GPIO_ResetBits(GPIOC, GPIO_Pin_13);//低电平点亮
 }
 
-void RedLED_OFF(void)
+void GreenLED_OFF(void)
 {
 	GPIO_SetBits(GPIOC, GPIO_Pin_13);
 }
 
-void RedLED_Turn(void)
+void GreenLED_Turn(void)
 {
 	if (GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_13) == 0)
 	{
@@ -39,42 +39,3 @@ void RedLED_Turn(void)
 	}
 }
 
-void YellowLED_ON(void)
-{
-	GPIO_ResetBits(GPIOA, GPIO_Pin_5);//低电平点亮
-}
-
-void YellowLED_OFF(void)
-{
-	GPIO_SetBits(GPIOA, GPIO_Pin_5);
-}
-
-void YellowLED_Turn(void)
-{
-	if (GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_5) == 0)
-	{
-		GPIO_SetBits(GPIOA, GPIO_Pin_5);
-	}else{
-		GPIO_ResetBits(GPIOA, GPIO_Pin_5);
-	}
-}
-
-void GreenLED_ON(void)
-{
-	GPIO_ResetBits(GPIOA, GPIO_Pin_8);//低电平点亮
-}
-
-void GreenLED_OFF(void)
-{
-	GPIO_SetBits(GPIOA, GPIO_Pin_8);
-}
-
-void GreenLED_Turn(void)
-{
-	if (GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_8) == 0)
-	{
-		GPIO_SetBits(GPIOA, GPIO_Pin_8);
-	}else{
-		GPIO_ResetBits(GPIOA, GPIO_Pin_8);
-	}
-}
