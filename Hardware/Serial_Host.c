@@ -3,11 +3,11 @@
 #include <stdarg.h>
 #include "LED.h"
 
-uint8_t ToOpenMV_TxPacket[4];
-uint8_t FromOpenMV_RxPacket[6];//除去包头包尾的数组长度但是因为有校验位所以比数据长度多1
-uint8_t FromOpenMV_RxFlag;
+uint8_t ToHost_TxPacket[4];
+uint8_t FromHost_RxPacket[6];//除去包头包尾的数组长度但是因为有校验位所以比数据长度多1
+uint8_t FromHost_RxFlag;
 
-void OpenMV_Init(void)
+void Host_Init(void)
 {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -47,32 +47,32 @@ void OpenMV_Init(void)
 	LED_Init();
 }
 
-void ToOpenMV_SendByte(uint8_t Byte)
+void ToHost_SendByte(uint8_t Byte)
 {
 	USART_SendData(USART3, Byte);
 	USART_GetFlagStatus(USART3, USART_FLAG_TXE);
 	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) ==  RESET);//等待清零
 }
 
-void ToOpenMV_SendArray(uint8_t *Array, uint16_t Length)
+void ToHost_SendArray(uint8_t *Array, uint16_t Length)
 {
 	uint16_t i;
 	for(i = 0; i < Length; i++)
 	{
-		ToOpenMV_SendByte(Array[i]);
+		ToHost_SendByte(Array[i]);
 	}
 }
 
-void ToOpenMV_SendString(char *String)
+void ToHost_SendString(char *String)
 {
 	uint8_t i;
 	for(i = 0; String[i] != '\0'; i++)
 	{
-		ToOpenMV_SendByte(String[i]);
+		ToHost_SendByte(String[i]);
 	}
 }
 
-uint32_t OpenMV_Pow(uint32_t X, uint32_t Y)
+uint32_t Host_Pow(uint32_t X, uint32_t Y)
 {
 	uint32_t Result = 1;
 	while(Y--)
@@ -83,65 +83,65 @@ uint32_t OpenMV_Pow(uint32_t X, uint32_t Y)
 }
 	
 
-void ToOpenMV_SendNumber(uint32_t Number, uint8_t Length)
+void ToHost_SendNumber(uint32_t Number, uint8_t Length)
 {
 	uint8_t i;
 	for(i = 0; i < Length; i++)
 	{
-	ToOpenMV_SendByte(Number / OpenMV_Pow(10, Length - i - 1) % 10 + '0');
+	ToHost_SendByte(Number / Host_Pow(10, Length - i - 1) % 10 + '0');
 	}
 }
 
-uint8_t FromOpenMV_GetRxFlag(void)
+uint8_t FromHost_GetRxFlag(void)
 {
-	if (FromOpenMV_RxFlag == 1)
+	if (FromHost_RxFlag == 1)
 	{
-		FromOpenMV_RxFlag = 0;
+		FromHost_RxFlag = 0;
 		return 1;
 	}
 	return 0;
 }
 
-void ToOpenMV_SendPacket(void)
+void ToHost_SendPacket(void)
 {
-	ToOpenMV_SendByte(0xFF);
-	ToOpenMV_SendArray(ToOpenMV_TxPacket, 4);
-	ToOpenMV_SendByte(0xFE);
+	ToHost_SendByte(0xFF);
+	ToHost_SendArray(ToHost_TxPacket, 4);
+	ToHost_SendByte(0xFE);
 	
 }
 
 void USART3_IRQHandler(void)
 {
-	static uint8_t FromOpenMV_RxState = 0;
-	static uint8_t FromOpenMV_pRxPacket = 0;
+	static uint8_t FromHost_RxState = 0;
+	static uint8_t FromHost_pRxPacket = 0;
 	if(USART_GetITStatus(USART3, USART_IT_RXNE) == SET)
 	{
-		uint8_t FromOpenMV_RxData = USART_ReceiveData(USART3);
+		uint8_t FromHost_RxData = USART_ReceiveData(USART3);
 		
-		if (FromOpenMV_RxState == 0)
+		if (FromHost_RxState == 0)
 		{
-			if (FromOpenMV_RxData == 0xA5)//包头
+			if (FromHost_RxData == 0xA5)//包头
 			{
-				FromOpenMV_RxState = 1;
-				FromOpenMV_pRxPacket = 0;
+				FromHost_RxState = 1;
+				FromHost_pRxPacket = 0;
 			}
-		}else if (FromOpenMV_RxState == 1)
+		}else if (FromHost_RxState == 1)
 		{
-			FromOpenMV_RxPacket[FromOpenMV_pRxPacket] = FromOpenMV_RxData;
-			FromOpenMV_pRxPacket++;
-			if (FromOpenMV_pRxPacket >= 6)//这里根据数组长度改变（除去包头包尾，因为有校验位所以比数据多1）
+			FromHost_RxPacket[FromHost_pRxPacket] = FromHost_RxData;
+			FromHost_pRxPacket++;
+			if (FromHost_pRxPacket >= 6)//这里根据数组长度改变（除去包头包尾，因为有校验位所以比数据多1）
 			{
-				FromOpenMV_RxState = 2;
+				FromHost_RxState = 2;
 			}
-		}else if (FromOpenMV_RxState == 2)
+		}else if (FromHost_RxState == 2)
 		{
-			if (FromOpenMV_RxData == 0x5A)//包尾
+			if (FromHost_RxData == 0x5A)//包尾
 			{
-				FromOpenMV_RxState = 0;
-				FromOpenMV_RxFlag = 1;
+				FromHost_RxState = 0;
+				FromHost_RxFlag = 1;
 			}
 		}
-		if(FromOpenMV_RxPacket[5] == 1)
+		if(FromHost_RxPacket[5] == 1)
 		{
 			GreenLED_Turn();
 		}

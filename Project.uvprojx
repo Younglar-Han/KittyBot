@@ -765,14 +765,14 @@
               <FilePath>.\Hardware\Encoder.h</FilePath>
             </File>
             <File>
-              <FileName>Serial_OpenMV.c</FileName>
+              <FileName>Serial_Host.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Hardware\Serial_OpenMV.c</FilePath>
+              <FilePath>.\Hardware\Serial_Host.c</FilePath>
             </File>
             <File>
-              <FileName>Serial_OpenMV.h</FileName>
+              <FileName>Serial_Host.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Hardware\Serial_OpenMV.h</FilePath>
+              <FilePath>.\Hardware\Serial_Host.h</FilePath>
             </File>
           </Files>
         </Group>

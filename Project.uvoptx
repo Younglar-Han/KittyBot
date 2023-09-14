@@ -1131,8 +1131,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\Hardware\Serial_OpenMV.c</PathWithFileName>
-      <FilenameWithoutPath>Serial_OpenMV.c</FilenameWithoutPath>
+      <PathWithFileName>.\Hardware\Serial_Host.c</PathWithFileName>
+      <FilenameWithoutPath>Serial_Host.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1143,8 +1143,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\Hardware\Serial_OpenMV.h</PathWithFileName>
-      <FilenameWithoutPath>Serial_OpenMV.h</FilenameWithoutPath>
+      <PathWithFileName>.\Hardware\Serial_Host.h</PathWithFileName>
+      <FilenameWithoutPath>Serial_Host.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

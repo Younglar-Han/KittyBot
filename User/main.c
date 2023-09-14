@@ -11,7 +11,7 @@
 #include "Encoder.h"
 #include "Timer.h"
 #include "PID.h"
-#include "Serial_OpenMV.h"
+#include "Serial_Host.h"
 
 uint32_t CurrentTime;
 bool ArriveFlag = false;
@@ -33,25 +33,24 @@ int main(void)
 	LED_Init();
 	Serial_Init();
 	Encoder_Init();
-	OpenMV_Init();
+	Host_Init();
 	
 	GreenLED_ON();//若程序正常运行，则PC13LED亮起
 
 	/* OLED显示初始化 */
-//	OLED_ShowString(1, 1, "----Younglar----");
+	// OLED_ShowString(1, 1, "----Younglar----");
 	// OLED_ShowString(2, 1, "Left:");
 	// OLED_ShowString(3, 1, "Right:");
 	// OLED_ShowString(4, 1, "State:Stop");
 
 	while(1)
 	{
-				/* Encoder debug */
+		/* Encoder debug */
 		OLED_ShowString(1, 1, "Ecd1:");
 		OLED_ShowSignedNum(1, 8, Ecd1_Get(), 7);
 		OLED_ShowString(2, 1, "Ecd2:");
 		OLED_ShowSignedNum(2, 8, Ecd2_Get(), 7);
 		
-
 		char str1[10];
 		sprintf(str1, "%.6lf", Speed1_Get());
 		OLED_ShowString(3, 1, "Speed1:");
