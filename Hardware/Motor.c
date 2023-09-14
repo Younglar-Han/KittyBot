@@ -162,51 +162,11 @@ void YawRotateDeg(float RotateDeg)
 	SPD_MODE = 0;
 }
 
-/* 驱动小车以对应速度前进 */
-void ForwardSpeedSet(float Speed)
+/* 驱动小车以对应速度边前进边转向 单位m/s, rad/s */
+void CarSpeedSet(float ForwardSpeed, float RotateRadSpeed)
 {
-	Motor1_SpeedSet(Speed);
-	Motor2_SpeedSet(Speed);
-	POS_MODE = 0;
-	SPD_MODE = 1;
-}
-
-/* 驱动小车以对应角速度旋转(Rad) */
-void RotateRadSpeedSet(float RotateRadSpeed)
-{
-	Motor1_SpeedSet(-RotateRadSpeed*d/2);
-	Motor2_SpeedSet(RotateRadSpeed*d/2);
-	POS_MODE = 0;
-	SPD_MODE = 1;
-}
-
-/* 驱动小车以对应角速度旋转(Deg) */
-void RotateDegSpeedSet(float RotateDegSpeed)
-{
-	float RotateRadSpeed = RotateDegSpeed/180*Pi;
-	Motor1_SpeedSet(-RotateRadSpeed*d/2);
-	Motor2_SpeedSet(RotateRadSpeed*d/2);
-	POS_MODE = 0;
-	SPD_MODE = 1;
-}
-
-/* 驱动小车以对应速度边前进边转向 */
-void CarSpeedSet(float ForwardSpeed, float RotateDegSpeed)
-{
-	float RotateRadSpeed = RotateDegSpeed/180*Pi;
 	Motor1_SpeedSet(ForwardSpeed-RotateRadSpeed*d/2);
 	Motor2_SpeedSet(ForwardSpeed+RotateRadSpeed*d/2);
-	POS_MODE = 0;
-	SPD_MODE = 1;
-}
-
-/*本来想在前进的同时转向已解决原地转向打滑的问题，但是失败，需要设置速度才可以*/
-/* 在前进的同时转向 */
-void CarRunSpeed(float Speed, float RotateDegSpeed)
-{
-	float RotateRadSpeed = RotateDegSpeed/180*Pi;
-	Motor1_RunPosition(Speed-RotateRadSpeed*d/2);
-	Motor2_RunPosition(Speed+RotateRadSpeed*d/2);
 	POS_MODE = 0;
 	SPD_MODE = 1;
 }

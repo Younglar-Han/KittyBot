@@ -8,7 +8,7 @@ uint8_t Serial_RxPacket[3];//³ıÈ¥°üÍ·°üÎ²µÄÊı×é³¤¶Èµ«ÊÇÒòÎªÓĞĞ£ÑéÎ»ËùÒÔ±ÈÊı¾İ³¤¶
 uint8_t Serial_RxFlag;
 
 extern float RemoteForwardSpeed;
-extern float RemoteRotateDegSpeed;
+extern float RemoteRotateRadSpeed;
 
 void Serial_Init(void)
 {
@@ -170,24 +170,23 @@ void USART1_IRQHandler(void)
 			//1000 0010È¡²¹Âë1111 1110Á½ÕßÏà¼ÓµÃ1 0000 0000
 			if(Serial_RxPacket[0] >= 0x80)//Èç¹ûµÚÒ»Î»ÊÇ1Ôò¼õÈ¥Ä£³¤(256)(Ïàµ±ÓÚÈ¡²¹Âë?)-(128-£¨·ûºÅÎ»ºóµÄÔ­Êı-128))
 			{
-				RemoteRotateDegSpeed = -(Serial_RxPacket[0] - 0x100)/100.0f*360.0f;//ÒòÎªÒ£¿Ø×óÓÒÓë½ÇËÙ¶ÈÕıºÃÏà·´ËùÒÔÕâÀïÈ¡¸ºÖµ
+				RemoteRotateRadSpeed = -(Serial_RxPacket[0] - 0x100);//ÒòÎªÒ£¿Ø×óÓÒÓë½ÇËÙ¶ÈÕıºÃÏà·´ËùÒÔÕâÀïÈ¡¸ºÖµ
 			}else//Èç¹ûµÚÒ»Î»ÊÇ0¾Í²»×öÈÎºÎ²Ù×÷,¼ûÉÏÎÄ£¬Ö¸¶ş½øÖÆÂëµÄµÚÒ»Î»
 			{
-				RemoteRotateDegSpeed = -Serial_RxPacket[0]/100.0f*360.0f;//¼Ù¶¨½ÇËÙ¶È×î´óÖµÎª90deg/s
+				RemoteRotateRadSpeed = -Serial_RxPacket[0];
 			}
 			if(Serial_RxPacket[1] >= 0x80)
 			{
-				RemoteForwardSpeed = (Serial_RxPacket[1] - 0x100)/100.0f*1.3f;//¼Ù¶¨ËÙ¶È×î´óÖµÎª1.3m/s
+				RemoteForwardSpeed = (Serial_RxPacket[1] - 0x100);
 			}else
 			{
-				RemoteForwardSpeed = Serial_RxPacket[1]/100.0f*1.3f;
+				RemoteForwardSpeed = Serial_RxPacket[1];
 			}
 
-			// ForwardSpeedSet(RemoteForwardSpeed);
-			// RotateDegSpeedSet(RemoteRotateDegSpeed);
-			// CarRunSpeed(RemoteForwardSpeed,RemoteRotateDegSpeed);
-			// CarRunSpeed(1,0);
-			// Motor_Update();
+			//ÕâÀïËÙ¶ÈÉèÖÃÎª-100~100£¬Ó³ÉäÎª×ªÏòËÙ¶È×î´óÖµÎª10rad/s£¬Ç°½øËÙ¶È×î´óÖµÎª1.3m/s
+			RemoteRotateRadSpeed = RemoteRotateRadSpeed/100.0f*10.0f;//×ªÏòËÙ¶È×î´óÖµÎª10rad/s
+			RemoteForwardSpeed = RemoteForwardSpeed/100.0f*1.3f;//Ç°½øËÙ¶È×î´óÖµÎª1.3m/s
+
 		}
 
 //		USART_ClearITPendingBit(USART3, USART_IT_RXNE);
