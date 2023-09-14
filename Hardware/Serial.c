@@ -7,6 +7,9 @@ uint8_t Serial_TxPacket[4];
 uint8_t Serial_RxPacket[3];//除去包头包尾的数组长度但是因为有校验位所以比数据长度多1
 uint8_t Serial_RxFlag;
 
+extern float RemoteForwardSpeed;
+extern float RemoteRotateDegSpeed;
+
 void Serial_Init(void)
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
@@ -129,8 +132,7 @@ void USART1_IRQHandler(void)
 {
 	static uint8_t RxState = 0;
 	static uint8_t pRxPacket = 0;
-	float RemoteForwardSpeed;
-	float RemoteRotateDegSpeed;
+
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) == SET)
 	{
 		uint8_t RxData = USART_ReceiveData(USART1);
@@ -168,10 +170,10 @@ void USART1_IRQHandler(void)
 			//1000 0010取补码1111 1110两者相加得1 0000 0000
 			if(Serial_RxPacket[0] >= 0x80)//如果第一位是1则减去模长(256)(相当于取补码?)-(128-（符号位后的原数-128))
 			{
-				RemoteRotateDegSpeed = -(Serial_RxPacket[0] - 0x100)/100.0f*90.0f;//因为遥控左右与角速度正好相反所以这里取负值
+				RemoteRotateDegSpeed = -(Serial_RxPacket[0] - 0x100)/100.0f*360.0f;//因为遥控左右与角速度正好相反所以这里取负值
 			}else//如果第一位是0就不做任何操作,见上文，指二进制码的第一位
 			{
-				RemoteRotateDegSpeed = -Serial_RxPacket[0]/100.0f*90.0f;//假定角速度最大值为90deg/s
+				RemoteRotateDegSpeed = -Serial_RxPacket[0]/100.0f*360.0f;//假定角速度最大值为90deg/s
 			}
 			if(Serial_RxPacket[1] >= 0x80)
 			{
@@ -180,7 +182,12 @@ void USART1_IRQHandler(void)
 			{
 				RemoteForwardSpeed = Serial_RxPacket[1]/100.0f*1.3f;
 			}
-			CarRunSpeed(RemoteForwardSpeed,RemoteRotateDegSpeed);
+
+			// ForwardSpeedSet(RemoteForwardSpeed);
+			// RotateDegSpeedSet(RemoteRotateDegSpeed);
+			// CarRunSpeed(RemoteForwardSpeed,RemoteRotateDegSpeed);
+			// CarRunSpeed(1,0);
+			// Motor_Update();
 		}
 
 //		USART_ClearITPendingBit(USART3, USART_IT_RXNE);

@@ -21,6 +21,7 @@ void YawRotateDeg(float RotateDeg);
 void ForwardSpeedSet(float Speed);
 void RotateRadSpeedSet(float RotateRadSpeed);
 void RotateDegSpeedSet(float RotateDegSpeed);
+void CarSpeedSet(float Speed, float RotateDegSpeed);
 void CarRunSpeed(float Speed, float RotateDegSpeed);
 
 void Motor_Update(void);

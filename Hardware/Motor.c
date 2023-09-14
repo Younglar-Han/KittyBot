@@ -19,9 +19,9 @@ float Position_VolPercent_Max_out = 70.0f;//位置控制PID电压百分比最大
 float Position_VolPercent_Max_iout = 30.0f;
 
 /* 速度PID的参数，输出为电压百分比 */
-const float Speed_Kp = 400.0f;
+const float Speed_Kp = 200.0f;
 const float Speed_Ki = 0.0f;
-const float Speed_Kd = 0.0f;
+const float Speed_Kd = 10.0f;
 const float Speed_PID_Parameters [3] = {Speed_Kp, Speed_Ki, Speed_Kd};
 float Speed_VolPercent_Max_out = 100.0f;//速度控制PID电压百分比最大输出
 float Speed_VolPercent_Max_iout = 30.0f;
@@ -34,8 +34,8 @@ float LastPosition2;
 float Position2Ref;
 float Position2Set;
 
-float Speed1Ref;
-float Speed2Ref;
+float Speed1Ref; //left speed feedback
+float Speed2Ref; //right speed feedback
 float Speed1Set;
 float Speed2Set;
 
@@ -186,6 +186,16 @@ void RotateDegSpeedSet(float RotateDegSpeed)
 	float RotateRadSpeed = RotateDegSpeed/180*Pi;
 	Motor1_SpeedSet(-RotateRadSpeed*d/2);
 	Motor2_SpeedSet(RotateRadSpeed*d/2);
+	POS_MODE = 0;
+	SPD_MODE = 1;
+}
+
+/* 驱动小车以对应速度边前进边转向 */
+void CarSpeedSet(float ForwardSpeed, float RotateDegSpeed)
+{
+	float RotateRadSpeed = RotateDegSpeed/180*Pi;
+	Motor1_SpeedSet(ForwardSpeed-RotateRadSpeed*d/2);
+	Motor2_SpeedSet(ForwardSpeed+RotateRadSpeed*d/2);
 	POS_MODE = 0;
 	SPD_MODE = 1;
 }

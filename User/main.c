@@ -19,6 +19,12 @@ bool RotateFlag = false;
 extern float Position1;
 extern float Position2;
 
+float RemoteForwardSpeed;
+float RemoteRotateDegSpeed;
+
+// extern float RemoteForwardSpeed;
+// extern float RemoteRotateDegSpeed;
+
 uint8_t State;//1为Stop 2为Forward 3为Rotate
 
 int main(void)
@@ -67,11 +73,26 @@ void TIM2_IRQHandler(void)//这个中断函数在启动文件里找//由于速度不稳定，中断间隔
 	if(TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)
 	{
 		CurrentTime++;
+		CarSpeedSet(RemoteForwardSpeed,RemoteRotateDegSpeed);
 		Motor_Update();
  		if(CurrentTime%100 == 0)
  		{
 			GreenLED_Turn();
  		}
+		// if(CurrentTime%1000 == 300)
+ 		// {
+		// 	ForwardDistance(-0.6);
+ 		// }
+ 		// if(fabs(Position1 + 0.6f)<0.01f&&(!ArriveFlag))
+ 		// {
+ 		// 	YawRotateDeg(180);//yaw轴旋转180度//但是有bug，实际是90度
+ 		// 	ArriveFlag = true;
+ 		// }
+ 		// if(fabs(Position1 - (-0.6f-0.2042f))<0.01f&&ArriveFlag&&(!RotateFlag))
+ 		// {
+ 		// 	ForwardDistance(-0.6);
+ 		// 	RotateFlag = true;
+ 		// }
 
 		/* Timer debug */
 		// OLED_ShowString(1, 1, "Time:");
