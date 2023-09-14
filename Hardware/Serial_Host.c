@@ -1,11 +1,14 @@
 #include "stm32f10x.h"                  // Device header
 #include <stdio.h>
 #include <stdarg.h>
-#include "LED.h"
 
 uint8_t ToHost_TxPacket[4];
-uint8_t FromHost_RxPacket[6];//除去包头包尾的数组长度但是因为有校验位所以比数据长度多1
+uint8_t FromHost_RxPacket[9];//除去包头包尾的数组长度但是因为有校验位所以比数据长度多1
+//接收两个float，所以数据长度是4
 uint8_t FromHost_RxFlag;
+
+extern float HostForwardSpeed;
+extern float HostRotateRadSpeed;
 
 void Host_Init(void)
 {
@@ -44,7 +47,6 @@ void Host_Init(void)
 	NVIC_Init(&NVIC_InitStructure);
 	
 	USART_Cmd(USART3, ENABLE);//USART初始化
-	LED_Init();
 }
 
 void ToHost_SendByte(uint8_t Byte)
@@ -129,7 +131,7 @@ void USART3_IRQHandler(void)
 		{
 			FromHost_RxPacket[FromHost_pRxPacket] = FromHost_RxData;
 			FromHost_pRxPacket++;
-			if (FromHost_pRxPacket >= 6)//这里根据数组长度改变（除去包头包尾，因为有校验位所以比数据多1）
+			if (FromHost_pRxPacket >= 9)//这里根据数组长度改变（除去包头包尾，因为有校验位所以比数据多1）
 			{
 				FromHost_RxState = 2;
 			}
@@ -141,11 +143,13 @@ void USART3_IRQHandler(void)
 				FromHost_RxFlag = 1;
 			}
 		}
-		if(FromHost_RxPacket[5] == 1)
+
+		if(FromHost_GetRxFlag() == 1)
 		{
-			GreenLED_Turn();
+			HostRotateRadSpeed = -*((float*)(FromHost_RxPacket))*10.0f;//转向速度最大值为10rad/s
+			HostForwardSpeed = *((float*)(FromHost_RxPacket + 4))*1.3f;//前进速度最大值为1.3m/s
 		}
-		
+
 		
 //		USART_ClearITPendingBit(USART3, USART_IT_RXNE);
 //		在前面GetITStatus的时候自动清除了标志位，这里不需要重复清除，否则可能会出现无法进入GetITStatus的情况

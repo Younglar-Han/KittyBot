@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 extern uint8_t ToHost_TxPacket[];
-extern uint8_t FromHost_RxPacket[]; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÍµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Òªï¿½ï¿½
+extern uint8_t FromHost_RxPacket[]; //Èç¹û¸ÄÊý¾ÝÀàÐÍµÄ»°ÕâÀïÒ²ÐèÒª¸Ä
 
 void Host_Init(void);
 void ToHost_SendByte(uint8_t Byte);

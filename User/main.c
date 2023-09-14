@@ -19,8 +19,10 @@ bool RotateFlag = false;
 extern float Position1;
 extern float Position2;
 
-float RemoteForwardSpeed;
-float RemoteRotateRadSpeed;
+float RemoteForwardSpeed;//通过蓝牙设置的前进速度
+float RemoteRotateRadSpeed;//通过蓝牙设置的转向速度
+float HostForwardSpeed;//通过上位机设置的前进速度
+float HostRotateRadSpeed;//通过上位机设置的转向速度
 
 uint8_t State;//1为Stop 2为Forward 3为Rotate
 

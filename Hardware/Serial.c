@@ -4,7 +4,7 @@
 #include "Motor.h"
 
 uint8_t Serial_TxPacket[4];
-uint8_t Serial_RxPacket[3];//除去包头包尾的数组长度但是因为有校验位所以比数据长度多1
+uint8_t Serial_RxPacket[9];//除去包头包尾的数组长度但是因为有校验位所以比数据长度多1
 uint8_t Serial_RxFlag;
 
 extern float RemoteForwardSpeed;
@@ -148,7 +148,7 @@ void USART1_IRQHandler(void)
 		{
 			Serial_RxPacket[pRxPacket] = RxData;
 			pRxPacket++;
-			if (pRxPacket >= 3)//这里根据数组长度改变（除去包头包尾，因为有校验位所以比数据多1）
+			if (pRxPacket >= 9)//这里根据数组长度改变（除去包头包尾，因为有校验位所以比数据多1）
 			{
 				RxState = 2;
 			}
@@ -163,33 +163,10 @@ void USART1_IRQHandler(void)
 
 		if(Serial_GetRxFlag() == 1)
 		{
-			//下面这一段转换的解释
-			//由于蓝牙APP的原因，APP发送-1这里会接收到255，所以减去256刚好
-			//APP发送的0~127是正常的，但发送的-128~-1会对应为128~255(APP好像是以补码形式发送的)
-			//因此下面这一段实际上是取补码
-			//1000 0010取补码1111 1110两者相加得1 0000 0000
-			if(Serial_RxPacket[0] >= 0x80)//如果第一位是1则减去模长(256)(相当于取补码?)-(128-（符号位后的原数-128))
-			{
-				RemoteRotateRadSpeed = -(Serial_RxPacket[0] - 0x100);//因为遥控左右与角速度正好相反所以这里取负值
-			}else//如果第一位是0就不做任何操作,见上文，指二进制码的第一位
-			{
-				RemoteRotateRadSpeed = -Serial_RxPacket[0];
-			}
-			if(Serial_RxPacket[1] >= 0x80)
-			{
-				RemoteForwardSpeed = (Serial_RxPacket[1] - 0x100);
-			}else
-			{
-				RemoteForwardSpeed = Serial_RxPacket[1];
-			}
-
-			//这里速度设置为-100~100，映射为转向速度最大值为10rad/s，前进速度最大值为1.3m/s
-			RemoteRotateRadSpeed = RemoteRotateRadSpeed/100.0f*10.0f;//转向速度最大值为10rad/s
-			RemoteForwardSpeed = RemoteForwardSpeed/100.0f*1.3f;//前进速度最大值为1.3m/s
-
+			RemoteRotateRadSpeed = -*((float*)(Serial_RxPacket))*10.0f;//转向速度最大值为10rad/s
+			RemoteForwardSpeed = *((float*)(Serial_RxPacket + 4))*1.3f;//前进速度最大值为1.3m/s
 		}
-
-//		USART_ClearITPendingBit(USART3, USART_IT_RXNE);
+//		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 //		在前面GetITStatus的时候自动清除了标志位，这里不需要重复清除，否则可能会出现无法进入GetITStatus的情况
 //		另外前面的GetITStatus写成GetFlagStatus了，但是之前居然一直能用
 	}
