@@ -19,6 +19,15 @@ bool RotateFlag = false;
 extern float Position1;
 extern float Position2;
 
+/* 用于给上位机反馈数据 */
+extern float Speed1Ref;
+extern float Speed2Ref;
+uint8_t Speed1RefTemp[4]; //左轮速度存储数组
+uint8_t* Speed1RefPtr = (uint8_t*)&Speed1Ref; //指针
+uint8_t Speed2RefTemp[4]; //右轮速度存储数组
+uint8_t* Speed2RefPtr = (uint8_t*)&Speed2Ref; //指针
+uint16_t checkCodeTemp; //校验码存储
+
 float RemoteForwardSpeed;//通过蓝牙设置的前进速度
 float RemoteRotateRadSpeed;//通过蓝牙设置的转向速度
 float HostForwardSpeed;//通过上位机设置的前进速度
@@ -62,6 +71,19 @@ int main(void)
 		sprintf(str2, "%.6lf", Speed2_Get());
 		OLED_ShowString(4, 1, "Speed2:");
 		OLED_ShowString(4, 9, str2);
+
+		Serial_SendByte(0xA5);
+		checkCodeTemp = 0;
+		for(int i = 0; i < 4; i++)
+		{
+			Speed1RefTemp[i] = (Speed1RefPtr[i]&0xFF);
+			Speed2RefTemp[i] = (Speed2RefPtr[i]&0xFF);
+			checkCodeTemp += Speed1RefTemp[i] + Speed2RefTemp[i];
+		}
+		Serial_SendArray(Speed1RefTemp, 4);
+		Serial_SendArray(Speed2RefTemp, 4);
+		Serial_SendByte(checkCodeTemp&0xFF);
+		Serial_SendByte(0x5A);
 	}
 }
 
