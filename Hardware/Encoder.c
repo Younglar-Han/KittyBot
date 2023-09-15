@@ -78,7 +78,7 @@ int32_t Ecd2_Get(void)
 /* 获取电机1 已经 转过的总角度(rad)（130脉冲对应半圈）*/
 float Angle1_Get(void)
 {
-	Angle1 = Encoder1_Count / 130.0f * Pi;
+	Angle1 = Encoder1_Count / 260.0f * Pi;
 	return Angle1;
 }
 
@@ -93,7 +93,7 @@ float Position1_Get(void)
 /* 获取电机2 已经 转过的总角度(rad)（130脉冲对应半圈）*/
 float Angle2_Get(void)
 {
-	Angle2 = Encoder2_Count / 130.0f * Pi;
+	Angle2 = Encoder2_Count / 260.0f * Pi;
 	return Angle2;
 }
 
@@ -115,6 +115,10 @@ void EXTI0_IRQHandler(void)
 			{
 				Encoder1_Count ++;
 			}
+			else
+			{
+				Encoder1_Count --;
+			}
 		}
 		EXTI_ClearITPendingBit(EXTI_Line0);
 	}
@@ -130,6 +134,10 @@ void EXTI1_IRQHandler(void)
 			{
 				Encoder1_Count --;
 			}
+			else
+			{
+				Encoder1_Count ++;
+			}
 		}
 		EXTI_ClearITPendingBit(EXTI_Line1);
 	}
@@ -139,22 +147,30 @@ void EXTI9_5_IRQHandler(void)
 {
 	if(EXTI_GetITStatus(EXTI_Line6) == SET)//现在的判断不是多余的
 	{
-		if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7) == 0)
+		if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) == 0)
 		{
-			if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) == 0)
+			if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7) == 0)
 			{
 				Encoder2_Count --;
+			}
+			else
+			{
+				Encoder2_Count ++;
 			}
 		}
 		EXTI_ClearITPendingBit(EXTI_Line6);
 	}
 	if(EXTI_GetITStatus(EXTI_Line7) == SET)
 	{
-		if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) == 0)
+		if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7) == 0)
 		{
-			if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7) == 0)
+			if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) == 0)
 			{
 				Encoder2_Count ++;
+			}
+			else
+			{
+				Encoder2_Count --;
 			}
 		}
 		EXTI_ClearITPendingBit(EXTI_Line7);
