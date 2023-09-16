@@ -2,8 +2,8 @@
 
 #define Pi 3.14159265358979
 
-int32_t Encoder1_Count;//这里改成int32后大大提高幅值，减少溢出
-int32_t Encoder2_Count;//但是溢出的情况没有考虑
+float Encoder1_Count;//这里改成float后大大提高幅值，减少溢出
+float Encoder2_Count;//但是溢出的情况没有考虑
 
 float Angle1;
 float Angle2;
@@ -40,7 +40,7 @@ void Encoder_Init(void)
 	EXTI_InitStructure.EXTI_Line = EXTI_Line0 | EXTI_Line1 | EXTI_Line6 | EXTI_Line7;
 	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
 	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;//下降沿触发中断
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;//上升or下降沿触发中断
 	EXTI_Init(&EXTI_InitStructure);
 	
 
@@ -75,49 +75,60 @@ int32_t Ecd2_Get(void)
 	return Encoder2_Count;
 }
 
-/* 获取电机1 已经 转过的总角度(rad)（130脉冲对应半圈）*/
+/* 获取电机1 已经 转过的总角度(rad)（520脉冲对应半圈）（四倍频后）*/
 float Angle1_Get(void)
 {
-	Angle1 = Encoder1_Count / 260.0f * Pi;
+	Angle1 = Encoder1_Count / 520.0f * Pi;
 	return Angle1;
 }
 
-/* 获取轮1 已经 转过的总距离(m)（轮半径为23.5mm）*/
+/* 获取轮1 已经 转过的总距离(m)（轮半径为24mm）*/
 float Position1_Get(void)
 {
 	Angle1_Get();
-	Position1 = Angle1*23.5f/1000;
+	Position1 = Angle1*24.0f/1000;
 	return Position1;
 }
 
-/* 获取电机2 已经 转过的总角度(rad)（130脉冲对应半圈）*/
+/* 获取电机2 已经 转过的总角度(rad)（520脉冲对应半圈）（四倍频后）*/
 float Angle2_Get(void)
 {
-	Angle2 = Encoder2_Count / 260.0f * Pi;
+	Angle2 = Encoder2_Count / 520.0f * Pi;
 	return Angle2;
 }
 
-/* 获取轮2 已经 转过的总距离(m)（轮半径为23.5mm）*/
+/* 获取轮2 已经 转过的总距离(m)（轮半径为24mm）*/
 float Position2_Get(void)
 {
 	Angle2_Get();
-	Position2 = Angle2*23.5f/1000;
+	Position2 = Angle2*24.0f/1000;
 	return Position2;
 }
 
 void EXTI0_IRQHandler(void)
 {
-	if(EXTI_GetITStatus(EXTI_Line0) == SET)//这里对于01234这种一个pin对应一个EXTI通道的情况其实不用判断
+	if(EXTI_GetITStatus(EXTI_Line0) == SET) //A相边沿到来时
 	{	
-		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == 0)
+		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == 0) //下降沿
 		{
-			if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) == 0)
+			if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) == 0) //B相低电平
 			{
 				Encoder1_Count ++;
 			}
-			else
+			else //B相高电平
 			{
 				Encoder1_Count --;
+			}
+		}
+		else //上升沿
+		{
+			if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) == 0) //B相低电平
+			{
+				Encoder1_Count --;
+			}
+			else //B相高电平
+			{
+				Encoder1_Count ++;
 			}
 		}
 		EXTI_ClearITPendingBit(EXTI_Line0);
@@ -126,7 +137,7 @@ void EXTI0_IRQHandler(void)
 
 void EXTI1_IRQHandler(void)
 {
-	if(EXTI_GetITStatus(EXTI_Line1) == SET)//接上文，只有多pin对应一通道的情况要判断
+	if(EXTI_GetITStatus(EXTI_Line1) == SET)
 	{
 		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) == 0)
 		{
@@ -139,13 +150,24 @@ void EXTI1_IRQHandler(void)
 				Encoder1_Count ++;
 			}
 		}
+		else
+		{
+			if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == 0)
+			{
+				Encoder1_Count ++;
+			}
+			else
+			{
+				Encoder1_Count --;
+			}
+		}
 		EXTI_ClearITPendingBit(EXTI_Line1);
 	}
 }
 
 void EXTI9_5_IRQHandler(void)
 {
-	if(EXTI_GetITStatus(EXTI_Line6) == SET)//现在的判断不是多余的
+	if(EXTI_GetITStatus(EXTI_Line6) == SET)
 	{
 		if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) == 0)
 		{
@@ -156,6 +178,17 @@ void EXTI9_5_IRQHandler(void)
 			else
 			{
 				Encoder2_Count ++;
+			}
+		}
+		else
+		{
+			if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7) == 0)
+			{
+				Encoder2_Count ++;
+			}
+			else
+			{
+				Encoder2_Count --;
 			}
 		}
 		EXTI_ClearITPendingBit(EXTI_Line6);
@@ -171,6 +204,17 @@ void EXTI9_5_IRQHandler(void)
 			else
 			{
 				Encoder2_Count --;
+			}
+		}
+		else
+		{
+			if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) == 0)
+			{
+				Encoder2_Count --;
+			}
+			else
+			{
+				Encoder2_Count ++;
 			}
 		}
 		EXTI_ClearITPendingBit(EXTI_Line7);
