@@ -146,8 +146,8 @@ void USART3_IRQHandler(void)
 
 		if(FromHost_GetRxFlag() == 1)
 		{
-			HostRotateRadSpeed = -*((float*)(FromHost_RxPacket))*10.0f;//转向速度最大值为10rad/s
-			HostForwardSpeed = *((float*)(FromHost_RxPacket + 4))*1.3f;//前进速度最大值为1.3m/s
+			HostForwardSpeed = *((float*)(FromHost_RxPacket));//前进速度，最大值由上位机设定
+			HostRotateRadSpeed = *((float*)(FromHost_RxPacket + 4));//转向速度，最大值由上位机设定
 		}
 
 		
