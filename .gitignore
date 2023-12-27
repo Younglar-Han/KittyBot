@@ -2,7 +2,7 @@
 /Listings/
 
 # dot files
-
+/.vscode
 /.settings
 /.eide
 /.eide.usr.ctx.json
