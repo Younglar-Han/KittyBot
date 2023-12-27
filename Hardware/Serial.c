@@ -4,11 +4,12 @@
 #include "Motor.h"
 
 uint8_t Serial_TxPacket[4];
-uint8_t Serial_RxPacket[9];//除去包头包尾的数组长度但是因为有校验位所以比数据长度多1
+uint8_t Serial_RxPacket[10];//1btye(mode)+2float+1byte(check)
 uint8_t Serial_RxFlag;
 
 extern float RemoteForwardSpeed;
 extern float RemoteRotateRadSpeed;
+extern uint8_t mode;
 
 void Serial_Init(void)
 {
@@ -148,7 +149,7 @@ void USART1_IRQHandler(void)
 		{
 			Serial_RxPacket[pRxPacket] = RxData;
 			pRxPacket++;
-			if (pRxPacket >= 9)//这里根据数组长度改变（除去包头包尾，因为有校验位所以比数据多1）
+			if (pRxPacket >= 10)//这里根据数组长度改变（除去包头包尾，因为有校验位所以比数据多1）
 			{
 				RxState = 2;
 			}
@@ -163,8 +164,9 @@ void USART1_IRQHandler(void)
 
 		if(Serial_GetRxFlag() == 1)
 		{
-			RemoteRotateRadSpeed = -*((float*)(Serial_RxPacket))*10.0f;//转向速度最大值为10rad/s
-			RemoteForwardSpeed = *((float*)(Serial_RxPacket + 4))*1.3f;//前进速度最大值为1.3m/s
+			mode = Serial_RxPacket[0];
+			RemoteRotateRadSpeed = -*((float*)(Serial_RxPacket + 1))*35.0f;//转向速度最大值为27rad/s
+			RemoteForwardSpeed = *((float*)(Serial_RxPacket + 5))*1.8f;//前进速度最大值为1.8m/s
 		}
 //		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 //		在前面GetITStatus的时候自动清除了标志位，这里不需要重复清除，否则可能会出现无法进入GetITStatus的情况

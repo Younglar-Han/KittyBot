@@ -30,6 +30,7 @@ uint16_t checkCodeTemp; //校验码存储
 
 float RemoteForwardSpeed;//通过蓝牙设置的前进速度
 float RemoteRotateRadSpeed;//通过蓝牙设置的转向速度
+uint8_t mode;//0：上位机模式 1：蓝牙模式
 float HostForwardSpeed;//通过上位机设置的前进速度
 float HostRotateRadSpeed;//通过上位机设置的转向速度
 
@@ -72,18 +73,21 @@ int main(void)
 		OLED_ShowString(4, 1, "Speed2:");
 		OLED_ShowString(4, 9, str2);
 
-		// Serial_SendByte(0xA5);
-		// checkCodeTemp = 0;
-		// for(int i = 0; i < 4; i++)
-		// {
-		// 	Speed1RefTemp[i] = (Speed1RefPtr[i]&0xFF);
-		// 	Speed2RefTemp[i] = (Speed2RefPtr[i]&0xFF);
-		// 	checkCodeTemp += Speed1RefTemp[i] + Speed2RefTemp[i];
-		// }
-		// Serial_SendArray(Speed1RefTemp, 4);
-		// Serial_SendArray(Speed2RefTemp, 4);
-		// Serial_SendByte(checkCodeTemp&0xFF);
-		// Serial_SendByte(0x5A);
+		if(mode)
+		{
+			Serial_SendByte(0xA5);
+			checkCodeTemp = 0;
+			for(int i = 0; i < 4; i++)
+			{
+				Speed1RefTemp[i] = (Speed1RefPtr[i]&0xFF);
+				Speed2RefTemp[i] = (Speed2RefPtr[i]&0xFF);
+				checkCodeTemp += Speed1RefTemp[i] + Speed2RefTemp[i];
+			}
+			Serial_SendArray(Speed1RefTemp, 4);
+			Serial_SendArray(Speed2RefTemp, 4);
+			Serial_SendByte(checkCodeTemp&0xFF);
+			Serial_SendByte(0x5A);
+		}
 	}
 }
 
@@ -93,8 +97,10 @@ void TIM2_IRQHandler(void)//这个中断函数在启动文件里找//由于速度不稳定，中断间隔
 	if(TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)
 	{
 		CurrentTime++;
-		// CarSpeedSet(RemoteForwardSpeed,RemoteRotateRadSpeed);
-		CarSpeedSet(HostForwardSpeed,HostRotateRadSpeed);
+		if(mode)
+			CarSpeedSet(RemoteForwardSpeed,RemoteRotateRadSpeed);
+		else
+			CarSpeedSet(HostForwardSpeed,HostRotateRadSpeed);
 		Motor_Update();
  		if(CurrentTime%100 == 0)
  		{
