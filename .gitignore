@@ -1,21 +1,2 @@
 /Objects/
 /Listings/
-
-# dot files
-/.vscode
-/.settings
-/.eide
-/.eide.usr.ctx.json
-/.cmsis
-/.clang-format
-
-# project out
-/build
-/bin
-/obj
-/out
-
-# eide template
-*.ept
-*.eide-template
-KittyBot.code-workspace
