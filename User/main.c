@@ -88,6 +88,21 @@ int main(void)
 			Serial_SendByte(checkCodeTemp&0xFF);
 			Serial_SendByte(0x5A);
 		}
+		else
+		{
+			ToHost_SendByte(0xA5);
+			checkCodeTemp = 0;
+			for(int i = 0; i < 4; i++)
+			{
+				Speed1RefTemp[i] = (Speed1RefPtr[i]&0xFF);
+				Speed2RefTemp[i] = (Speed2RefPtr[i]&0xFF);
+				checkCodeTemp += Speed1RefTemp[i] + Speed2RefTemp[i];
+			}
+			ToHost_SendArray(Speed1RefTemp, 4);
+			ToHost_SendArray(Speed2RefTemp, 4);
+			ToHost_SendByte(checkCodeTemp&0xFF);
+			ToHost_SendByte(0x5A);
+		}
 	}
 }
 
