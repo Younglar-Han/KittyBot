@@ -39,6 +39,9 @@ float Speed2Ref; //right speed feedback
 float Speed1Set;
 float Speed2Set;
 
+float LinearXRef;
+float AngularZRef;
+
 float Motor1_VolPercentSet;
 float Motor2_VolPercentSet;
 
@@ -188,7 +191,9 @@ void Motor_Update(void)
 	/* SpeedRef update */
 	Speed1Ref = (Position1Ref-LastPosition1)*100;//计算速度(m/s)
 	Speed2Ref = (Position2Ref-LastPosition2)*100;//计算速度(m/s)
-
+	LinearXRef = (Speed1Ref + Speed2Ref) / 2.0f;
+	AngularZRef = (Speed2Ref - Speed1Ref) / d;
+	
 	if(POS_MODE)
 	{
 		Motor1_VolPercentSet = PID_calc(&Motor_PositionPID, Position1Ref, Position1Set);

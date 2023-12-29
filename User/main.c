@@ -26,6 +26,12 @@ uint8_t Speed1RefTemp[4]; //左轮速度存储数组
 uint8_t* Speed1RefPtr = (uint8_t*)&Speed1Ref; //指针
 uint8_t Speed2RefTemp[4]; //右轮速度存储数组
 uint8_t* Speed2RefPtr = (uint8_t*)&Speed2Ref; //指针
+extern float LinearXRef;
+extern float AngularZRef;
+uint8_t LinearXRefTemp[4]; //线速度存储数组
+uint8_t* LinearXRefPtr = (uint8_t*)&LinearXRef; //指针
+uint8_t AngularZRefTemp[4]; //角速度存储数组
+uint8_t* AngularZRefPtr = (uint8_t*)&AngularZRef; //指针
 uint16_t checkCodeTemp; //校验码存储
 
 float RemoteForwardSpeed;//通过蓝牙设置的前进速度
@@ -94,12 +100,12 @@ int main(void)
 			checkCodeTemp = 0;
 			for(int i = 0; i < 4; i++)
 			{
-				Speed1RefTemp[i] = (Speed1RefPtr[i]&0xFF);
-				Speed2RefTemp[i] = (Speed2RefPtr[i]&0xFF);
-				checkCodeTemp += Speed1RefTemp[i] + Speed2RefTemp[i];
+				LinearXRefTemp[i] = (LinearXRefPtr[i]&0xFF);
+				AngularZRefTemp[i] = (AngularZRefPtr[i]&0xFF);
+				checkCodeTemp += LinearXRefTemp[i] + AngularZRefTemp[i];
 			}
-			ToHost_SendArray(Speed1RefTemp, 4);
-			ToHost_SendArray(Speed2RefTemp, 4);
+			ToHost_SendArray(LinearXRefTemp, 4);
+			ToHost_SendArray(AngularZRefTemp, 4);
 			ToHost_SendByte(checkCodeTemp&0xFF);
 			ToHost_SendByte(0x5A);
 		}
