@@ -79,36 +79,18 @@ int main(void)
 		OLED_ShowString(4, 1, "Speed2:");
 		OLED_ShowString(4, 9, str2);
 
-		if(mode)
+		ToHost_SendByte(0xA5);
+		checkCodeTemp = 0;
+		for(int i = 0; i < 4; i++)
 		{
-			Serial_SendByte(0xA5);
-			checkCodeTemp = 0;
-			for(int i = 0; i < 4; i++)
-			{
-				Speed1RefTemp[i] = (Speed1RefPtr[i]&0xFF);
-				Speed2RefTemp[i] = (Speed2RefPtr[i]&0xFF);
-				checkCodeTemp += Speed1RefTemp[i] + Speed2RefTemp[i];
-			}
-			Serial_SendArray(Speed1RefTemp, 4);
-			Serial_SendArray(Speed2RefTemp, 4);
-			Serial_SendByte(checkCodeTemp&0xFF);
-			Serial_SendByte(0x5A);
+			LinearXRefTemp[i] = (LinearXRefPtr[i]&0xFF);
+			AngularZRefTemp[i] = (AngularZRefPtr[i]&0xFF);
+			checkCodeTemp += LinearXRefTemp[i] + AngularZRefTemp[i];
 		}
-		else
-		{
-			ToHost_SendByte(0xA5);
-			checkCodeTemp = 0;
-			for(int i = 0; i < 4; i++)
-			{
-				LinearXRefTemp[i] = (LinearXRefPtr[i]&0xFF);
-				AngularZRefTemp[i] = (AngularZRefPtr[i]&0xFF);
-				checkCodeTemp += LinearXRefTemp[i] + AngularZRefTemp[i];
-			}
-			ToHost_SendArray(LinearXRefTemp, 4);
-			ToHost_SendArray(AngularZRefTemp, 4);
-			ToHost_SendByte(checkCodeTemp&0xFF);
-			ToHost_SendByte(0x5A);
-		}
+		ToHost_SendArray(LinearXRefTemp, 4);
+		ToHost_SendArray(AngularZRefTemp, 4);
+		ToHost_SendByte(checkCodeTemp&0xFF);
+		ToHost_SendByte(0x5A);
 	}
 }
 
