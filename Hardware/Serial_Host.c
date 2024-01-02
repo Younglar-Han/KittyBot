@@ -3,8 +3,10 @@
 #include <stdarg.h>
 
 uint8_t ToHost_TxPacket[4];
-uint8_t FromHost_RxPacket[9];//除去包头包尾的数组长度但是因为有校验位所以比数据长度多1
-//接收两个float，所以数据长度是4
+uint8_t FromHost_RxPacket[9];
+//The length of the array excluding the header and the end of the packet 
+//but is 1 more than the data length because of the check bit
+//Two floats are received, so the data length is 8
 uint8_t FromHost_RxFlag;
 
 extern float HostForwardSpeed;
@@ -21,7 +23,7 @@ void Host_Init(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 	
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;//定义两个不同模式的引脚
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
@@ -33,7 +35,7 @@ void Host_Init(void)
 	USART_InitStructure.USART_Parity = USART_Parity_No;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-	USART_Init(USART3, &USART_InitStructure);//USART初始化
+	USART_Init(USART3, &USART_InitStructure);
 	
 	USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
 	
@@ -46,14 +48,14 @@ void Host_Init(void)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_Init(&NVIC_InitStructure);
 	
-	USART_Cmd(USART3, ENABLE);//USART初始化
+	USART_Cmd(USART3, ENABLE);
 }
 
 void ToHost_SendByte(uint8_t Byte)
 {
 	USART_SendData(USART3, Byte);
 	USART_GetFlagStatus(USART3, USART_FLAG_TXE);
-	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) ==  RESET);//等待清零
+	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) ==  RESET);
 }
 
 void ToHost_SendArray(uint8_t *Array, uint16_t Length)

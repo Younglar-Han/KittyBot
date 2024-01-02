@@ -177,20 +177,20 @@ void CarSpeedSet(float ForwardSpeed, float RotateRadSpeed)
 void Motor_Update(void)
 {
 	/* PID init*/
-	pid_type_def Motor_PositionPID;//位置PID
+	pid_type_def Motor_PositionPID;//Position PID
 	PID_init(&Motor_PositionPID, PID_POSITION, Position_PID_Parameters, Position_VolPercent_Max_out, Position_VolPercent_Max_iout);
-	pid_type_def Motor_SpeedPID;//速度PID
+	pid_type_def Motor_SpeedPID;//Speed PID
 	PID_init(&Motor_SpeedPID, PID_POSITION, Speed_PID_Parameters, Speed_VolPercent_Max_out, Speed_VolPercent_Max_iout);
 	
 	/* PositionRef update */
-	LastPosition1 = Position1Ref;//注意在别的地方不要使用PositionGet，否则速度计算会出错
-	LastPosition2 = Position2Ref;//保证PositionRef是10ms更新一次
+	LastPosition1 = Position1Ref;//Be careful not to use PositionGet elsewhere, otherwise the speed calculation will be wrong
+	LastPosition2 = Position2Ref;//Ensure that the PositionRef is updated once at 10ms
 	Position1Ref = Position1_Get();
 	Position2Ref = Position2_Get();
 
 	/* SpeedRef update */
-	Speed1Ref = (Position1Ref-LastPosition1)*100;//计算速度(m/s)
-	Speed2Ref = (Position2Ref-LastPosition2)*100;//计算速度(m/s)
+	Speed1Ref = (Position1Ref-LastPosition1)*100;//(m/s)
+	Speed2Ref = (Position2Ref-LastPosition2)*100;//(m/s)
 	LinearXRef = (Speed1Ref + Speed2Ref) / 2.0f;
 	AngularZRef = (Speed2Ref - Speed1Ref) / d;
 	
