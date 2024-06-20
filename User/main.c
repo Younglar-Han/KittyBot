@@ -78,7 +78,9 @@ int main(void)
 		sprintf(str2, "%.6lf", Speed2_Get());
 		OLED_ShowString(4, 1, "Speed2:");
 		OLED_ShowString(4, 9, str2);
-
+		/* Timer debug */
+		// OLED_ShowString(1, 1, "Time:");
+		// OLED_ShowNum(1, 7, CurrentTime, 9);
 		ToHost_SendByte(0xA5);
 		checkCodeTemp = 0;
 		for(int i = 0; i < 4; i++)
@@ -110,9 +112,6 @@ void TIM2_IRQHandler(void)//这个中断函数在启动文件里找//由于速度不稳定，中断间隔
 			GreenLED_Turn();
  		}
 
-		/* Timer debug */
-		// OLED_ShowString(1, 1, "Time:");
-		// OLED_ShowNum(1, 7, CurrentTime, 9);
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	}
 }
