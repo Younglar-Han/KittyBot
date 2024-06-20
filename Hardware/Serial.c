@@ -165,8 +165,8 @@ void USART1_IRQHandler(void)
 		if(Serial_GetRxFlag() == 1)
 		{
 			mode = Serial_RxPacket[0];
-			RemoteRotateRadSpeed = -*((float*)(Serial_RxPacket + 1))*35.0f;//转向速度最大值为27rad/s
-			RemoteForwardSpeed = *((float*)(Serial_RxPacket + 5))*1.8f;//前进速度最大值为1.8m/s
+			RemoteRotateRadSpeed = -*((float*)(Serial_RxPacket + 1))*3.0f;//转向速度最大值为3rad/s
+			RemoteForwardSpeed = *((float*)(Serial_RxPacket + 5))*0.7f;//前进速度最大值为0.7m/s
 		}
 //		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 //		在前面GetITStatus的时候自动清除了标志位，这里不需要重复清除，否则可能会出现无法进入GetITStatus的情况
