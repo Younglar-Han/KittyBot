@@ -97,9 +97,9 @@ int main(void)
 }
 
 /* Get current time(ms)(max time is 1193 hours) */
-void TIM2_IRQHandler(void)//这个中断函数在启动文件里找//由于速度不稳定，中断间隔改为10ms
+void TIM4_IRQHandler(void)//这个中断函数在启动文件里找//由于速度不稳定，中断间隔改为10ms
 {
-	if(TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)
+	if(TIM_GetITStatus(TIM4, TIM_IT_Update) == SET)
 	{
 		CurrentTime++;
 		if(mode)
@@ -112,7 +112,7 @@ void TIM2_IRQHandler(void)//这个中断函数在启动文件里找//由于速度不稳定，中断间隔
 			GreenLED_Turn();
  		}
 
-		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
 	}
 }
 
